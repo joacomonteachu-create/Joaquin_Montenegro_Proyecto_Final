@@ -1,46 +1,37 @@
 <?php
-require_once __DIR__ . '/funciones.php';
-exigirLogin();
+require 'conexion.php';
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['salir'])) { session_destroy(); header('Location: index.php'); exit; }
+entrar();
 ?>
-<!DOCTYPE html>
-<html lang="es">
+<!DOCTYPE html><html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Mi panel | PaseFútbol</title>
     <link rel="stylesheet" href="css/estilos.css">
 </head>
 <body>
 <header class="barra">
     <div class="contenedor barra-contenido">
-        <a class="marca" href="index.php">
-            <span class="marca-icono">PF</span>
-            PaseFútbol
-        </a>
-        <form method="POST" action="cerrar_sesion.php">
-            <input type="hidden" name="token_csrf" value="<?= escapar(generarTokenCsrf()) ?>">
-            <button class="btn btn-secundario" type="submit">Cerrar sesión</button>
+        <a class="marca" href="index.php">PaseFútbol</a>
+        <form method="post">
+            <button class="btn btn-secundario" name="salir" value="1">Cerrar sesión</button>
         </form>
     </div>
 </header>
 <main class="contenedor pagina">
     <section class="bienvenida">
         <p class="etiqueta">PANEL PERSONAL</p>
-        <h1>¡Hola, <?= escapar($_SESSION['usuario_nombre'] ?? 'hincha') ?>!</h1>
-        <p>Iniciaste sesión correctamente en PaseFútbol.</p>
+        <h1>¡Hola, <?= e($_SESSION['nombre']) ?>!</h1>
+        <p>Iniciaste sesión correctamente.</p>
     </section>
     <section class="panel-card">
         <h2>Tu cuenta</h2>
-        <p>Desde este panel podés acceder a las opciones disponibles para tu usuario.</p>
-        <?php if (($_SESSION['usuario_rol'] ?? '') === 'administrador'): ?>
-            <a class="btn" href="admin/admin_usuarios.php">Administrar usuarios</a>
-        <?php else: ?>
-            <p class="nota">Tu cuenta tiene permisos de usuario. Las funciones de administración están reservadas para el administrador.</p>
+        <p>Bienvenido a PaseFútbol.</p>
+        <?php if ($_SESSION['email'] === ADMIN_EMAIL): ?>
+            <a class="btn" href="admin.php">Administrar usuarios</a>
         <?php endif; ?>
     </section>
-    <p>
-        <a href="index.php">Volver al inicio</a>
-    </p>
 </main>
 </body>
 </html>
